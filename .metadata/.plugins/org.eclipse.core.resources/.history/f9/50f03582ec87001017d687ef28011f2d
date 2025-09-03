@@ -1,0 +1,5 @@
+package com.expenseTracker.repository;
+
+public interface UserRepository {
+
+}

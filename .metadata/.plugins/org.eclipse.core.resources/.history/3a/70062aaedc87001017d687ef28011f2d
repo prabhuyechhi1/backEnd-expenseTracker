@@ -1,0 +1,25 @@
+package com.expenseTracker;
+
+import javax.sql.DataSource;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+
+@SpringBootApplication
+public class ExpenseTrackerApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ExpenseTrackerApplication.class, args);
+		ApplicationContext context = SpringApplication.run(ExpenseTrackerApplication.class, args);
+		System.out.println("Hello Welcome to Expense Tracker");
+		
+		try {
+			DataSource dataSource = context.getBean(DataSource.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+}

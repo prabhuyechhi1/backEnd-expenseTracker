@@ -1,0 +1,63 @@
+package com.expenseTracker.config;
+
+// Add these new imports at the top
+import com.expenseTracker.security.UserDetailsServiceImpl;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+// ---
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService; // Inject our custom service
+
+    // This is your existing SecurityFilterChain bean, no changes needed here
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+        
+        return http.build();
+    }
+
+    // ADD THIS NEW BEAN
+    // This bean connects our custom user details service and password encoder
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService); // Sets the custom user details service
+        authProvider.setPasswordEncoder(passwordEncoder()); // Sets the password encoder
+        return authProvider;
+    }
+
+    // ADD THIS NEW BEAN
+    // This bean is required to trigger the authentication process
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // This is your existing passwordEncoder bean, no changes needed
+    @Bean
+
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}

@@ -1,0 +1,13 @@
+package com.expenseTracker.service;
+
+import org.springframework.stereotype.Service;
+
+import com.expenseTracker.repository.UserRepository;
+
+@Service
+public class UserService {
+	
+	private UserRepository userRepository;
+	
+
+}

@@ -1,0 +1,5 @@
+package com.expenseTracker.model;
+
+public class user {
+
+}

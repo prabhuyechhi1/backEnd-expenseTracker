@@ -1,0 +1,5 @@
+package com.expenseTracker.util;
+
+public class JwtUtil {
+
+}

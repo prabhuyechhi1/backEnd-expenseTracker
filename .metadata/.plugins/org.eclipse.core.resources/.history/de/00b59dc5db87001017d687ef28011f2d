@@ -1,0 +1,29 @@
+package com.expenseTracker;
+
+import java.sql.DriverManager;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.sql.Connection;
+
+
+@SpringBootApplication
+public class ExpenseTrackerApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ExpenseTrackerApplication.class, args);
+		System.out.println("Hello Welcome to Expense Tracker");
+		
+		String url = "jdbc:mysql://localhost:3306/expense_tracker";
+        String username = "root";
+        String password = "yourpassword";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            System.out.println("✅ JDBC Connection Successful: " + connection.getMetaData().getURL());
+        } catch (Exception e) {
+            System.err.println("❌ JDBC Connection Failed: " + e.getMessage());
+        }
+	}
+
+}

@@ -1,0 +1,30 @@
+package com.expenseTracker.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.expenseTracker.model.User;
+import com.expenseTracker.repository.UserRepository;
+
+@Service
+public class UserService {
+	
+	private final UserRepository userRepository;
+
+	@Autowired
+	public UserService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+		
+	}
+	
+	public void registerUser(User user) {
+		
+		if(userRepository.findByUsername(user.getUsername()).isPresent()) {
+			throw new IllegalStateException("User Name Already taken Please use other User Name");
+		}
+		if(userRepository.findByEmail(user.getEmail()).isPresent()) {
+			throw new IllegalStateException("This Email Already taken");
+		}
+		
+	}
+}

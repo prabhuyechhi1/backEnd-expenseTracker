@@ -1,0 +1,5 @@
+package com.expenseTracker.dto;
+
+public class JwtResponse {
+
+}

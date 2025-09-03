@@ -1,0 +1,17 @@
+# Give the gateway a unique port
+server.port=8082
+
+# Give the application a name
+spring.application.name=api-gateway
+
+# --- Eureka Client Configuration ---
+# Tell the gateway where to find the discovery server
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+
+# --- Gateway Routing Rules ---
+# Define a route for the user-service
+spring.cloud.gateway.routes[0].id=user-service-route
+# Forward to the user-service (using its registered name)
+spring.cloud.gateway.routes[0].uri=lb://user-service
+# Match any request with a path starting with /api/auth/
+spring.cloud.gateway.routes[0].predicates[0]=Path=/api/auth/**

@@ -1,0 +1,66 @@
+package com.expenseTracker.service;
+
+// Add these new imports
+import com.expenseTracker.dto.JwtResponse;
+import com.expenseTracker.dto.LoginRequest;
+import com.expenseTracker.util.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+// ---
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.expenseTracker.model.User;
+import com.expenseTracker.repository.UserRepository;
+
+@Service
+public class UserService {
+	
+	private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager; // Inject AuthenticationManager
+    private final JwtUtil jwtUtil; // Inject JwtUtil
+
+	@Autowired
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, 
+                     AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+		this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+	}
+	
+	public User registerUser(User user) {
+		// (Your existing registration code is here)
+        if(userRepository.findByUsername(user.getUsername()).isPresent()) {
+			throw new IllegalStateException("User Name Already taken Please use other User Name");
+		}
+		if(userRepository.findByEmail(user.getEmail()).isPresent()) {
+			throw new IllegalStateException("This Email Already taken");
+		}
+		
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		
+		return userRepository.save(user);
+	}
+
+    // ADD THIS NEW METHOD FOR LOGIN
+    public JwtResponse loginUser(LoginRequest loginRequest) {
+        // 1. Authenticate the user
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+        // 2. If authentication is successful, set it in the security context
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 3. Generate the JWT
+        String jwt = jwtUtil.generateJwtToken(authentication);
+
+        // 4. Return the JWT in our response object
+        return new JwtResponse(jwt);
+    }
+}

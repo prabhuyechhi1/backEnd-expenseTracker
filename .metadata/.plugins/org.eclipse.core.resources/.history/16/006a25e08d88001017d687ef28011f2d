@@ -1,0 +1,5 @@
+package com.expenseTracker.security;
+
+public class UserDetailsServiceImpl {
+
+}

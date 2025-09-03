@@ -1,0 +1,50 @@
+package com.expenseTracker.service;
+
+import com.expenseTracker.dto.LoginRequest;
+import com.expenseTracker.model.User;
+import com.expenseTracker.repository.UserRepository;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User registerUser(User user) {
+        // Check for duplicate username
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalStateException("Username already taken");
+        }
+        // Check for duplicate email
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalStateException("Email already in use");
+        }
+
+        // We are no longer hashing the password.
+        // It will be saved as plain text for now.
+        return userRepository.save(user);
+    }
+    
+    public User loginUser(LoginRequest loginRequest) {
+    	
+    	
+    	
+    	User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+    	
+    	if(!user.getPassword().equals(loginRequest.getPassword())){
+    		throw new RuntimeException("Invalid password");
+    	}
+    	
+		return user;
+    	
+    }
+}

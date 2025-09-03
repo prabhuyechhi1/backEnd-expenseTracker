@@ -1,0 +1,28 @@
+package com.expenseTracker;
+
+import java.sql.Connection;
+
+import javax.sql.DataSource;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class ExpenseTrackerApplication {
+
+	public static void main(String[] args) {
+		ApplicationContext context  = SpringApplication.run(ExpenseTrackerApplication.class, args);
+		
+		try {
+			DataSource datasrc = context.getBean(DataSource.class);
+			try(Connection con = datasrc.getConnection()) {
+				System.out.println("✅ JDBC Connection Successful: " + con.getMetaData().getURL());
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("❌ JDBC Connection Failed: " + e.getMessage());
+		}
+	}
+
+}

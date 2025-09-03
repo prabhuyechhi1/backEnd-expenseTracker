@@ -1,0 +1,37 @@
+package com.expenseTracker.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.expenseTracker.model.User;
+import com.expenseTracker.repository.UserRepository;
+import com.expenseTracker.util.JwtUtil;
+
+@Service
+public class UserService {
+	
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager; // Inject AuthenticationManager
+    private final JwtUtil jwtUtil; // Inject JwtUtil
+
+	@Autowired
+	public UserService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+		
+	}
+	
+	public User registerUser(User user) {
+		
+		if(userRepository.findByUsername(user.getUsername()).isPresent()) {
+			throw new IllegalStateException("User Name Already taken Please use other User Name");
+		}
+		if(userRepository.findByEmail(user.getEmail()).isPresent()) {
+			throw new IllegalStateException("This Email Already taken");
+		}
+		return userRepository.save(user);
+		
+	}
+}
